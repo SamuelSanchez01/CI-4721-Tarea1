@@ -1,0 +1,410 @@
+Gramatica ift:
+S  -> E $
+E  -> if E then E else E
+    | if E then E
+    | E + E
+    | n
+
+diosmio ayuda esto se ve mas largo que clase de Yriarte en ayunas, Maquina LR(1):
+
+I0:
+    S -> . E $                  ,$
+    E -> . if E then E else E   ,$
+    E -> . if E then E          ,$
+    E -> . E + E                ,$
+    E -> . n                    ,$
+    --------------------------------
+    n  ->   I1 
+    E  ->   I2 
+    if ->   I3
+
+I1:
+    E -> n .     ,$
+
+I2:
+    S -> E . $      ,$
+    E -> E . + E    ,$
+    ------------------
+    + ->  I3
+    $ ->  I38
+
+I3:
+    E -> if . E then E else E    ,$
+    E -> if . E then E           ,$
+    E -> . if E then E else E    ,then
+    E -> . if E then E           ,then
+    E -> . E + E                 ,then
+    E -> . n                     ,then
+    -----------------------------------
+    E  ->  I5
+    if ->  I6
+    n  ->  I7
+
+I4:
+    E -> E + . E                 ,$
+    E -> . if E then E else E    ,$
+    E -> . if E then E           ,$
+    E -> . E + E                 ,$
+    E -> . n                     ,$
+    --------------------------------
+    E  ->  I8
+    if ->  I3
+    n  ->  I1
+
+I5:
+    E -> if E . then E else E   ,$
+    E -> if E . then E          ,$
+    E -> E . + E                ,then
+    ----------------------------------
+    then ->  I9
+    +    ->  I10
+
+I6:
+    E -> if . E then E else E   ,then
+    E -> if . E then E          ,then
+    E -> . if E then E else E   ,then
+    E -> . if E then E          ,then
+    E -> . E + E                ,then
+    E -> . n                    ,then
+    ----------------------------------
+    E  ->  I11
+    if ->  I6
+    n  ->  I7
+
+I7:
+    E -> n .        ,then
+
+I8:
+    E -> E + E .   ,$
+    E -> E . + E   ,$
+    -----------------
+    + -> I4  
+CONFLICTO (disculpe las mayusculas profe pero ya me perdi y debo poder identificar rapido)
+
+I9:
+    E -> if E then . E else E    ,$
+    E -> if E then . E           ,$
+    E -> . if E then E else E    ,else
+    E -> . if E then E           ,else
+    E -> . E + E                 ,else
+    E -> . n                     ,else
+    -----------------------------------
+    E  ->  I12
+    if ->  I13
+    n  ->  I14
+
+I10:
+    E -> E + . E               ,then
+    E -> . if E then E else E  ,then
+    E -> . if E then E         ,then
+    E -> . E + E               ,then
+    E -> . n                   ,then
+    --------------------------------=
+    E  ->  I15
+    if ->  I6
+    n  ->  I7
+
+I11:
+    E -> if E . then E else E ,then
+    E -> if E . then E        ,then
+    E -> E . + E              ,then
+    --------------------------------
+    then ->  I16
+    +    ->  I10
+
+I12:
+    E -> if E then E . else E  ,$
+    E -> if E then E .         ,$
+    E -> E . + E               ,else
+    --------------------------------
+    else ->  I17
+    +    ->  I18
+CONFLICTO
+
+I13:
+    E -> if . E then E else E  ,else
+    E -> if . E then E         ,else
+    E -> . if E then E else E  ,then
+    E -> . if E then E         ,then
+    E -> . E + E               ,then
+    E -> . n                   ,then
+    ---------------------------------
+    E  ->  I19
+    if ->  I6
+    n  ->  I7
+
+I14:
+    E -> n .    ,else
+
+I15:
+    E -> E + E .   ,then
+    E -> E . + E   ,then
+    ------------------------
+    + ->  I10
+CONFLICTO
+
+I16:
+    E -> if E then . E else E  ,then
+    E -> if E then . E         ,then
+    E -> . if E then E else E  ,else
+    E -> . if E then E         ,else
+    E -> . E + E               ,else
+    E -> . n                   ,else
+    ---------------------------------
+    E  ->  I20
+    if ->  I21
+    n  ->  I22
+
+I17:
+    E -> if E then E else . E  ,$
+    E -> . if E then E else E  ,$
+    E -> . if E then E         ,$
+    E -> . E + E               ,$
+    E -> . n                   ,$
+    --------------------------------
+    E  ->  I23
+    if ->  I3
+    n  ->  I1
+
+I18:
+    E -> E + . E               ,else
+    E -> . if E then E else E  ,else
+    E -> . if E then E         ,else
+    E -> . E + E               ,else
+    E -> . n                   ,else
+    ----------------------------------
+    E  ->  I24
+    if ->  I13
+    n  ->  I14
+
+I19:
+    E -> if E . then E else E   ,else
+    E -> if E . then E          ,else
+    E -> E . + E                ,then
+    -------------------------------------
+    then ->  I25
+    +    ->  I10
+
+I20:
+    E -> if E then E . else E  ,then
+    E -> if E then E .         ,then
+    E -> E . + E               ,else
+    ---------------------------------
+    else ->  I26
+    +    ->  I27
+CONFLICTO
+
+I21:
+    E -> if . E then E else E   ,else
+    E -> if . E then E          ,else
+    E -> . if E then E else E   ,then
+    E -> . if E then E          ,then
+    E -> . E + E                ,then
+    E -> . n                    ,then
+    ----------------------------------
+    E  ->  I28
+    if ->  I6
+    n  ->  I7
+
+I22:
+    E -> n .   ,else
+
+I23:
+    E -> if E then E else E . ,$
+    E -> E . + E              ,$
+    --------------------------------
+    + ->  I4
+CONFLICTO
+
+I24:
+    E -> E + E .    ,else
+    E -> E . + E    ,else
+    ----------------------
+    + ->  I18
+CONFLICTO
+
+I25:
+    E -> if E then . E else E   ,else
+    E -> if E then . E          ,else
+    E -> . if E then E else E   ,else
+    E -> . if E then E          ,else
+    E -> . E + E                ,else
+    E -> . n                    ,else
+    ----------------------------------
+    E  ->  I29
+    if ->  I13
+    n  ->  I14
+
+I26:
+    E -> if E then E else . E  ,then
+    E -> . if E then E else E  ,then
+    E -> . if E then E         ,then
+    E -> . E + E               ,then
+    E -> . n                   ,then
+    --------------------------------
+    E  ->  I30
+    if ->  I6
+    n  ->  I7
+
+I27:
+    E -> E + . E               ,else
+    E -> . if E then E else E  ,else
+    E -> . if E then E         ,else
+    E -> . E + E               ,else
+    E -> . n                   ,else
+    --------------------------------
+    E  ->  I31
+    if ->  I21
+    n  ->  I22
+
+I28:
+    E -> if E . then E else E  ,else
+    E -> if E . then E         ,else
+    E -> E . + E               ,then
+    --------------------------------
+    then ->  I32
+    +    ->  I10
+
+I29:
+    E -> if E then E . else E  ,else
+    E -> if E then E .         ,else
+    E -> E . + E               ,else
+    --------------------------------
+    else ->  I33
+    +    ->  I18
+2 CONFLICTOS
+
+I30:
+    E -> if E then E else E .  ,then
+    E -> E . + E               ,then
+    --------------------------------
+    +  ->  I10
+CONFLICTO
+
+I31:
+    E -> E + E .     ,else
+    E -> E . + E     ,else
+    -------------------------
+    + ->  I27
+CONFLICTO
+
+I32:
+    E -> if E then . E else E  ,else
+    E -> if E then . E         ,else
+    E -> . if E then E else E  ,else
+    E -> . if E then E         ,else
+    E -> . E + E               ,else
+    E -> . n                   ,else
+    --------------------------------
+    E  ->  I34
+    if ->  I21
+    n  ->  I22
+
+I33:
+    E -> if E then E else . E  ,else
+    E -> . if E then E else E  ,else
+    E -> . if E then E         ,else
+    E -> . E + E               ,else
+    E -> . n                   ,else
+    --------------------------------
+    E     ->     I35
+    if   ->     I13
+    n  ->     I14
+
+I34:
+    E -> if E then E . else E  ,else
+    E -> if E then E .         ,else
+    E -> E . + E               ,else
+    ----------------------------------
+    else ->  I36
+    +    ->  I27
+2 CONFLICTOS
+
+I35:
+    E -> if E then E else E .  ,else
+    E -> E . + E               ,else
+    --------------------------------
+    + -> I18
+CONFLICTO
+
+I36:
+    E -> if E then E else . E  ,else
+    E -> . if E then E else E  ,else
+    E -> . if E then E         ,else
+    E -> . E + E               ,else
+    E -> . n                   ,else
+    --------------------------------
+    E  ->  I37
+    if ->  I21
+    n  ->  I22
+
+I37:
+    E -> if E then E else E .  ,else
+    E -> E . + E               ,else
+    --------------------------------
+    +     ->     127
+CONFLICTO
+
+I38:
+    S -> E $ .  ,$ 
+
+AL FIN
+
+Conflictos:
+
+Todos los conflictos y soluciones:
+  
+Estado I8 con conflicto:
+Conflicto Shift + / Reduce E -> E + E
+default Reduce E -> E + E
+
+Estado I12 con conflicto:
+Conflicto Shift + / Reduce E -> if E then E
+default Shift +
+
+Estado I15 con conflicto:
+Conflicto Shift + / Reduce E -> E + E
+default Reduce E -> E + E
+
+Estado I20 con conflicto:
+Conflicto Shift + / Reduce E -> if E then E
+default Shift +
+
+Estado I23 con conflicto:
+Conflicto Shift + / Reduce E -> if E then E else E
+default Reduce E -> if E then E else E
+
+Estado I24 con conflicto:
+Conflicto Shift + / Reduce E -> E + E
+default Reduce E -> E + E
+
+Estado I29 con 2 conflictos:
+Conflicto Shift + / Reduce E -> if E then E
+default Shift +
+Conflicto Shift else / Reduce E -> if E then E
+default Shift else
+
+Estado I30 con conflicto:
+Conflicto Shift + / Reduce E -> if E then E else E
+default Reduce E -> if E then E else E
+
+Estado I31 con conflicto:
+Conflicto Shift + / Reduce E -> E + E
+default Reduce E -> E + E
+
+Estado I34 con 2 conflictos:
+Conflicto Shift + / Reduce E -> if E then E
+default Shift +
+Conflicto Shift else / Reduce E -> if E then E
+default Shift else
+
+Estado I35 con conflicto:
+Conflicto Shift + / Reduce E -> if E then E else E
+default Reduce E -> if E then E else E
+
+Estado I37 con conflicto:
+Conflicto Shift + / Reduce E -> if E then E else E
+default Reduce E -> if E then E else E
+
+
+Pofe lo demas es mucha chamba de verdad perdon, yo cuando las dejo mochas normalmente hago una parte pero de verdad ya es mucho profe
