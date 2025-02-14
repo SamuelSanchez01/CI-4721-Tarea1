@@ -1,0 +1,22 @@
+json -> whitespace jsonObject
+jsonObject -> leftBrace keyValuePairList rightBrace
+keyValuePairList -> keyValuePair keyValueListCont | whitespace
+keyValuePair -> quotedString colonSymbol jsonValue
+keyValueListCont -> commaSymbol keyValuePairList | whitespace
+jsonValue -> boolean | integer | quotedString | jsonObject | jsonArray
+jsonArray -> leftBracket valueList rightBracket | leftBracket whitespace rightBracket
+valueList -> jsonValue valueListCont
+valueListCont -> commaSymbol valueList | whitespace
+whitespace -> ' ' | '\t' | '\n' | '\r'
+leftBrace -> '{'
+rightBrace -> '}'
+leftBracket -> '['
+rightBracket -> ']'
+colonSymbol -> ':'
+commaSymbol -> ','
+trueValue -> "true"
+falseValue -> "false"
+nullValue -> "null"
+boolean -> trueValue | falseValue
+integer -> (regex(r'-?(0|[1-9][0-9]*)'))
+quotedString -> '"' (regex(r'[^"\\]*')) '"'
